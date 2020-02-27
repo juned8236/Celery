@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<!-- saved from url=(0063)https://www.codingforentrepreneurs.com/blog/celery-redis-django -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <!--<base target="_blank" href="/">--><base href="." target="_blank">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <style type="text/css">svg:not(:root).svg-inline--fa {
+  overflow: visible;
+}
+
+.svg-inline--fa {
+  display: inline-block;
+  font-size: inherit;
+  height: 1em;
+  overflow: visible;
+  vertical-align: -0.125em;
+}
+.svg-inline--fa.fa-lg {
+  vertical-align: -0.225em;
+}
+.svg-inline--fa.fa-w-1 {
+  width: 0.0625em;
+}
+.svg-inline--fa.fa-w-2 {
+  width: 0.125em;
+}
+.svg-inline--fa.fa-w-3 {
+  width: 0.1875em;
+}
+.svg-inline--fa.fa-w-4 {
+  width: 0.25em;
+}
+.svg-inline--fa.fa-w-5 {
+  width: 0.3125em;
+}
+.svg-inline--fa.fa-w-6 {
+  width: 0.375em;
+}
+.svg-inline--fa.fa-w-7 {
+  width: 0.4375em;
+}
+.svg-inline--fa.fa-w-8 {
+  width: 0.5em;
+}
+.svg-inline--fa.fa-w-9 {
+  width: 0.5625em;
+}
+.svg-inline--fa.fa-w-10 {
+  width: 0.625em;
+}
+.svg-inline--fa.fa-w-11 {
+  width: 0.6875em;
+}
+.svg-inline--fa.fa-w-12 {
+  width: 0.75em;
+}
+.svg-inline--fa.fa-w-13 {
+  width: 0.8125em;
+}
+.svg-inline--fa.fa-w-14 {
+  width: 0.875em;
+}
+.svg-inline--fa.fa-w-15 {
+  width: 0.9375em;
+}
+.svg-inline--fa.fa-w-16 {
+  width: 1em;
+}
+.svg-inline--fa.fa-w-17 {
+  width: 1.0625em;
+}
+.svg-inline--fa.fa-w-18 {
+  width: 1.125em;
+}
+.svg-inline--fa.fa-w-19 {
+  width: 1.1875em;
+}
+.svg-inline--fa.fa-w-20 {
+  width: 1.25em;
+}
+.svg-inline--fa.fa-pull-left {
+  margin-right: 0.3em;
+  width: auto;
+}
+.svg-inline--fa.fa-pull-right {
+  margin-left: 0.3em;
+  width: auto;
+}
+.svg-inline--fa.fa-border {
+  height: 1.5em;
+}
+.svg-inline--fa.fa-li {
+  width: 2em;
+}
+.svg-inline--fa.fa-fw {
+  width: 1.25em;
+}
+
+.fa-layers svg.svg-inline--fa {
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.fa-layers {
+  display: inline-block;
+  height: 1em;
+  position: relative;
+  text-align: center;
+  vertical-align: -0.125em;
+  width: 1em;
+}
+.fa-layers svg.svg-inline--fa {
+  -webkit-transform-origin: center center;
+          transform-origin: center center;
+}
+
+.fa-layers-counter, .fa-layers-text {
+  display: inline-block;
+  position: absolute;
+  text-align: center;
+}
+
+.fa-layers-text {
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  -webkit-transform-origin: center center;
+          transform-origin: center center;
+}
+
+.fa-layers-counter {
+  background-color: #ff253a;
+  border-radius: 1em;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  color: #fff;
+  height: 1.5em;
+  line-height: 1;
+  max-width: 5em;
+  min-width: 1.5em;
+  overflow: hidden;
+  padding: 0.25em;
+  right: 0;
+  text-overflow: ellipsis;
+  top: 0;
+  -webkit-transform: scale(0.25);
+          transform: scale(0.25);
+  -webkit-transform-origin: top right;
+          transform-origin: top right;
+}
+
+.fa-layers-bottom-right {
+  bottom: 0;
+  right: 0;
+  top: auto;
+  -webkit-transform: scale(0.25);
+          transform: scale(0.25);
+  -webkit-transform-origin: bottom right;
+          transform-origin: bottom right;
+}
+
+.fa-layers-bottom-left {
+  bottom: 0;
+  left: 0;
+  right: auto;
+  top: auto;
+  -webkit-transform: scale(0.25);
+          transform: scale(0.25);
+  -webkit-transform-origin: bottom left;
+          transform-origin: bottom left;
+}
+
+.fa-layers-top-right {
+  right: 0;
+  top: 0;
+  -webkit-transform: scale(0.25);
+          transform: scale(0.25);
+  -webkit-transform-origin: top right;
+          transform-origin: top right;
+}
+
+.fa-layers-top-left {
+  left: 0;
+  right: auto;
+  top: 0;
+  -webkit-transform: scale(0.25);
+          transform: scale(0.25);
+  -webkit-transform-origin: top left;
+          transform-origin: top left;
+}
+
+.fa-lg {
+  font-size: 1.3333333333em;
+  line-height: 0.75em;
+  vertical-align: -0.0667em;
+}
+
+.fa-xs {
+  font-size: 0.75em;
+}
+
+.fa-sm {
+  font-size: 0.875em;
+}
+
+.fa-1x {
+  font-size: 1em;
+}
+
+.fa-2x {
+  font-size: 2em;
+}
+
+.fa-3x {
+  font-size: 3em;
+}
+
+.fa-4x {
+  font-size: 4em;
+}
+
+.fa-5x {
+  font-size: 5em;
+}
+
+.fa-6x {
+  font-size: 6em;
+}
+
+.fa-7x {
+  font-size: 7em;
+}
+
+.fa-8x {
+  font-size: 8em;
+}
+
+.fa-9x {
+  font-size: 9em;
+}
+
+.fa-10x {
+  font-size: 10em;
+}
+
+.fa-fw {
+  text-align: center;
+  width: 1.25em;
+}
+
+.fa-ul {
+  list-style-type: none;
+  margin-left: 2.5em;
+  padding-left: 0;
+}
+.fa-ul > li {
+  position: relative;
+}
+
+.fa-li {
+  left: -2em;
+  position: absolute;
+  text-align: center;
+  width: 2em;
+  line-height: inherit;
+}
+
+.fa-border {
+  border: solid 0.08em #eee;
+  border-radius: 0.1em;
+  padding: 0.2em 0.25em 0.15em;
+}
+
+.fa-pull-left {
+  float: left;
+}
+
+.fa-pull-right {
+  float: right;
+}
+
+.fa.fa-pull-left,
+.fas.fa-pull-left,
+.far.fa-pull-left,
+.fal.fa-pull-left,
+.fab.fa-pull-left {
+  margin-right: 0.3em;
+}
+.fa.fa-pull-right,
+.fas.fa-pull-right,
+.far.fa-pull-right,
+.fal.fa-pull-right,
+.fab.fa-pull-right {
+  margin-left: 0.3em;
+}
+
+.fa-spin {
+  -webkit-animation: fa-spin 2s infinite linear;
+          animation: fa-spin 2s infinite linear;
+}
+
+.fa-pulse {
+  -webkit-animation: fa-spin 1s infinite steps(8);
+          animation: fa-spin 1s infinite steps(8);
+}
+
+@-webkit-keyframes fa-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+
+@keyframes fa-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+.fa-rotate-90 {
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=1)";
+  -webkit-transform: rotate(90deg);
+          transform: rotate(90deg);
+}
+
+.fa-rotate-180 {
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2)";
+  -webkit-transform: rotate(180deg);
+          transform: rotate(180deg);
+}
+
+.fa-rotate-270 {
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=3)";
+  -webkit-transform: rotate(270deg);
+          transform: rotate(270deg);
+}
+
+.fa-flip-horizontal {
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1)";
+  -webkit-transform: scale(-1, 1);
+          transform: scale(-1, 1);
+}
+
+.fa-flip-vertical {
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1)";
+  -webkit-transform: scale(1, -1);
+          transform: scale(1, -1);
+}
+
+.fa-flip-both, .fa-flip-horizontal.fa-flip-vertical {
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1)";
+  -webkit-transform: scale(-1, -1);
+          transform: scale(-1, -1);
+}
+
+:root .fa-rotate-90,
+:root .fa-rotate-180,
+:root .fa-rotate-270,
+:root .fa-flip-horizontal,
+:root .fa-flip-vertical,
+:root .fa-flip-both {
+  -webkit-filter: none;
+          filter: none;
+}
+
+.fa-stack {
+  display: inline-block;
+  height: 2em;
+  position: relative;
+  width: 2.5em;
+}
+
+.fa-stack-1x,
+.fa-stack-2x {
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.svg-inline--fa.fa-stack-1x {
+  height: 1em;
+  width: 1.25em;
+}
+.svg-inline--fa.fa-stack-2x {
+  height: 2em;
+  width: 2.5em;
+}
+
+.fa-inverse {
+  color: #fff;
+}
+
+.sr-only {
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.sr-only-focusable:active, .sr-only-focusable:focus {
+  clip: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  position: static;
+  width: auto;
+}
+
+.svg-inline--fa .fa-primary {
+  fill: var(--fa-primary-color, currentColor);
+  opacity: 1;
+  opacity: var(--fa-primary-opacity, 1);
+}
+
+.svg-inline--fa .fa-secondary {
+  fill: var(--fa-secondary-color, currentColor);
+  opacity: 0.4;
+  opacity: var(--fa-secondary-opacity, 0.4);
+}
+
+.svg-inline--fa.fa-swap-opacity .fa-primary {
+  opacity: 0.4;
+  opacity: var(--fa-secondary-opacity, 0.4);
+}
+
+.svg-inline--fa.fa-swap-opacity .fa-secondary {
+  opacity: 1;
+  opacity: var(--fa-primary-opacity, 1);
+}
+
+.svg-inline--fa mask .fa-primary,
+.svg-inline--fa mask .fa-secondary {
+  fill: black;
+}
+
+.fad.fa-inverse {
+  color: #fff;
+}</style><link rel="canonical" href="https://www.codingforentrepreneurs.com/">
+    <meta name="google-signin-client_id" content="437210896519-64mdshg04tma84ugbpcm1gki789n6du3.apps.googleusercontent.com">
+     
+     
+    
+    <meta property="fb:app_id" content="332106933603142">
+    <meta property="og:site_name" content="Coding for Entrepreneurs">
+    <meta property="og:url" content="https://www.codingforentrepreneurs.com/blog/celery-redis-django">
+    <meta property="og:type" content="product">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    
+    <meta property="og:image" content="https://static.codingforentrepreneurs.com/media/cfe-blog/celery-redis-django/setup_celery_redis_django.jpg">
+       
+    <meta property="og:title" content="Celery + Redis + Django // Blog // Coding for Entrepreneurs ">
+    <meta property="og:description" content="Coding for Entrepreneurs is a series of project-based programming courses designed to teach non-technical founders how to launch and build their own projects. Learn Python, Django, Angular, Typescript, Web Application Development, Web Scraping, and more.">
+
+    
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image:src" content="https://static.codingforentrepreneurs.com/media/cfe-blog/celery-redis-django/setup_celery_redis_django.jpg">
+    <meta name="twitter:site" content="@joincfe">
+    <meta name="twitter:url" content="https://www.codingforentrepreneurs.com/blog/celery-redis-django">
+    <meta name="twitter:description" content="Coding for Entrepreneurs is a series of project-based programming courses designed to teach non-technical founders how to launch and build their own projects. Learn Python, Django, Angular, Typescript, Web Application Development, Web Scraping, and more.">
+    <meta name="twitter:title" content="Celery + Redis + Django // Blog // Coding for Entrepreneurs">
+
+
+
+    <link rel="apple-touch-icon" sizes="57x57" href="https://cfe2-static.s3-us-west-2.amazonaws.com/static/img/icons/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="https://cfe2-static.s3-us-west-2.amazonaws.com/static/img/icons/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="https://cfe2-static.s3-us-west-2.amazonaws.com/static/img/icons/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="https://cfe2-static.s3-us-west-2.amazonaws.com/static/img/icons/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="https://cfe2-static.s3-us-west-2.amazonaws.com/static/img/icons/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="https://cfe2-static.s3-us-west-2.amazonaws.com/static/img/icons/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="https://cfe2-static.s3-us-west-2.amazonaws.com/static/img/icons/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="https://cfe2-static.s3-us-west-2.amazonaws.com/static/img/icons/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://cfe2-static.s3-us-west-2.amazonaws.com/static/img/icons/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="https://cfe2-static.s3-us-west-2.amazonaws.com/static/img/icons/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://cfe2-static.s3-us-west-2.amazonaws.com/static/img/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/android-icon-48x48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="https://cfe2-static.s3-us-west-2.amazonaws.com/static/img/icons/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://cfe2-static.s3-us-west-2.amazonaws.com/static/img/icons/favicon-16x16.png">
+<meta name="msapplication-TileColor" content="#007cae">
+<meta name="msapplication-TileImage" content="https://cfe2-static.s3-us-west-2.amazonaws.com:443/static/img/icons/apple-icon-144x144.png">
+<meta name="theme-color" content="#007cae">
+
+
+
+    <link rel="manifest" href="https://www.codingforentrepreneurs.com/manifest/">
+    <title>Celery + Redis + Django | Post | Coding For Entrepreneurs</title>
+
+    <link rel="stylesheet" href="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/bootstrap.min.css">
+    <link href="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/2.b9f23a33.chunk.css" rel="stylesheet">
+    <link href="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/main.8f001414.chunk.css" rel="stylesheet">
+    <meta property="og:title" content="Celery + Redis + Django | Post" data-react-helmet="true"><meta property="og:type" content="article" data-react-helmet="true"><meta property="og:url" content="https://www.codingforentrepreneurs.com/blog/celery-redis-django" data-react-helmet="true"><meta property="og:image" content="https://cfe2-static.s3-us-west-2.amazonaws.com:443/static/img/icons/android-icon-48x48.png" data-react-helmet="true"><meta property="og:description" content="CodingForEntrepreneurs.com is made for doers. Learn how to build real projects using software." data-react-helmet="true"><meta name="twitter:card" content="summary_large_image" data-react-helmet="true"><meta name="twitter:site" content="@joincfe" data-react-helmet="true"><meta name="twitter:creator" content="@joincfe" data-react-helmet="true"><meta name="twitter:title" content="Celery + Redis + Django | Post" data-react-helmet="true"><meta name="twitter:description" content="CodingForEntrepreneurs.com is made for doers. Learn how to build real projects using software." data-react-helmet="true"><meta name="twitter:image" content="https://cfe2-static.s3-us-west-2.amazonaws.com:443/static/img/icons/android-icon-48x48.png" data-react-helmet="true"></head>
+    <body>
+        <script async="" src="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/analytics.js"></script><script async="" defer="defer" src="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/platform.js" gapi_processed="true"></script>
+        <script async="" defer="defer" src="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/buttons.js"></script>
+        <script async="" src="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/widgets.js" charset="utf-8"></script>
+        <div id="fb-root"></div>
+        <noscript><div class='bg-cfe text-white py-5 my-0'>
+                <div class='py-5 my-5'>
+                <div class='col-md-4 mx-auto text-center py-5 my-5'>You need to enable JavaScript to run this app.</div>
+                </div>
+            </div>
+        </noscript>
+        
+        <div id="root"><div class="min-page-height"><div><nav class="bg-cfe navbar-dark d-flex navbar navbar-expand-md"><a class="navbar-brand mr-2 active" aria-current="page" href="https://www.codingforentrepreneurs.com/"><img src="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/android-icon-48x48.png" class="d-inline-block align-top mr-1" width="30" height="30" alt="Coding for Entrepreneurs nav logo"></a><form class="my-0 form d-none d-md-inline w-25"><input class="form-control mr-md-2" type="text" name="q" placeholder="Search" aria-label="Search" value=""><button class="btn btn-outline-secondary d-none" type="submit">Search</button></form><button type="button" class="navbar-toggler"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse"><ul class="ml-auto text-center navbar-nav"><li class="nav-item"><a class="nav-link" href="https://www.codingforentrepreneurs.com/">Home</a></li><li class="nav-item"><a class="nav-link" href="https://www.codingforentrepreneurs.com/courses">Courses</a></li><li class="nav-item"><a class="nav-link" href="https://www.codingforentrepreneurs.com/projects">Projects</a></li><li class="nav-item"><a class="nav-link" href="https://www.codingforentrepreneurs.com/login">Login</a></li><li class="nav-item"><a class="nav-link bg-warning text-dark rounded" href="https://www.codingforentrepreneurs.com/enroll">Enroll</a></li></ul></div></nav></div><div class="container-fluid"><div class="row d-flex"><div class="order-1 order-md-1 col-12 col-md-2 border-right py-3 bg-sidebar-light"><div><div expand="md"><div class="d-md-none"><form class="my-0 form d-md-none d-inline w-25"><input class="form-control mr-md-2" type="text" name="q" placeholder="Search" aria-label="Search" value=""><button class="btn btn-outline-secondary d-none" type="submit">Search</button></form></div><div class="d-none"><ul class="mb-4 list-group"><a class="list-group-item px-2" href="https://www.codingforentrepreneurs.com/courses">Courses</a><a class="list-group-item px-2" href="https://www.codingforentrepreneurs.com/projects">Projects</a><a class="list-group-item px-2" href="https://www.codingforentrepreneurs.com/blog">Posts</a><a class="list-group-item px-2" href="https://www.codingforentrepreneurs.com/t">Topics</a></ul><ul class="mb-4 list-group"><a class="list-group-item px-2 d-none" href="https://www.codingforentrepreneurs.com/messages">Messages</a><a class="list-group-item px-2" href="https://www.codingforentrepreneurs.com/questions">Questions</a><a class="list-group-item px-2" href="https://www.codingforentrepreneurs.com/blocks">Code Blocks</a></ul><ul class="mb-4 list-group"><a class="list-group-item px-2 text-success" href="https://www.codingforentrepreneurs.com/from-zero">Start Here</a></ul></div></div></div></div><div class="order-2 order-md-2 col-12 col-md-10 min-height min-page-height py-3"><div class=""><div></div><div><nav class="d-md-block d-none" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a class="undefined active" aria-current="page" href="https://www.codingforentrepreneurs.com/blog">Posts</a></li><li class="active breadcrumb-item" aria-current="page">Celery + Redis + Django</li></ol></nav><div class="row"><div class="col-md-9"><img class="img-fluid mb-3" src="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/setup_celery_redis_django.jpg" alt="Celery + Redis + Django Logo}"><h1>Celery + Redis + Django</h1><p class="mb-0 pb-0"><span format="LL">March 24, 2017</span> <span>· <a class="undefined" href="https://www.codingforentrepreneurs.com/u/jmitchel3">Justin Mitchel</a> </span></p><hr><div class="undefined   "><p><em>Celery</em> is a task queue with focus on real-time processing, while also supporting task scheduling.</p><p><em>Redis</em> is a message broker. This means it handles the queue of "messages" between Django and Celery. </p><p><em>Django</em> is a web framework made for perfectionists with deadlines. </p><p>All three work together to make real-time magic. </p><h2>Watch this guide with the series Time &amp; Tasks <a target="_self" href="http://joincfe.com/projects/time-tasks">here</a>.</h2><p>============</p><h4>Do you have a Django Project? If not, use <a target="_self" href="http://kirr.co/itznm2/">this</a>.</h4><p><a target="_self" href="http://kirr.co/itznm2/">This post</a> shows you how to create a basic Django project.</p><h4>Looking for <a target="_self" href="https://www.codingforentrepreneurs.com/blog/hello-linux-install-redis">linux or server-side Redis installation</a>?</h4><p>If you need a Linux installation, <a target="_self" href="https://www.codingforentrepreneurs.com/blog/hello-linux-install-redis">this guide</a> will show you how (it's easy).</p><h4>Let's do this!</h4><ol><li><p>Download Redis</p><ul><li><p>Using <a target="_self" href="http://brew.sh/">Homebrew</a>:</p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="brew install redis
+
+brew services start redis">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code>brew install redis
+
+brew services start redis</code></pre></div><p>  Brew permission errors? Try <code>sudo chown -R "$USER":admin /usr/local</code></p></li><li><p>Direct <a target="_self" href="http://redis.io/download">Download</a></p></li></ul></li><li><p>Open &amp; Test Redis:</p><ul><li><p>open Terminal</p></li><li><p><strong>redis-cli ping</strong></p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="$ redis-cli ping
+PONG">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code>$ redis-cli ping
+PONG</code></pre></div></li><li><p><strong>redis-server</strong></p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="$ redis-server
+86750:C 08 Nov 08:17:21.431 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
+86750:M 08 Nov 08:17:21.433 * Increased maximum number of open files to 10032 (it was originally set to 256).
+                _._                                                  
+           _.-``__ &#39;&#39;-._                                             
+      _.-``    `.  `_.  &#39;&#39;-._           Redis 3.2.5 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ &#39;&#39;-._                                   
+ (    &#39;      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|&#39;` _.-&#39;|     Port: 6379
+ |    `-._   `._    /     _.-&#39;    |     PID: 86750
+  `-._    `-._  `-./  _.-&#39;    _.-&#39;                                   
+ |`-._`-._    `-.__.-&#39;    _.-&#39;_.-&#39;|                                  
+ |    `-._`-._        _.-&#39;_.-&#39;    |           http://redis.io        
+  `-._    `-._`-.__.-&#39;_.-&#39;    _.-&#39;                                   
+ |`-._`-._    `-.__.-&#39;    _.-&#39;_.-&#39;|                                  
+ |    `-._`-._        _.-&#39;_.-&#39;    |                                  
+  `-._    `-._`-.__.-&#39;_.-&#39;    _.-&#39;                                   
+      `-._    `-.__.-&#39;    _.-&#39;                                       
+          `-._        _.-&#39;                                           
+              `-.__.-&#39;                                               
+
+86750:M 08 Nov 08:17:21.434 # Server started, Redis version 3.2.5
+86750:M 08 Nov 08:17:21.434 * The server is now ready to accept connections on port 6379">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code>$ redis-server
+<span style="color: rgb(42, 161, 152);">86750</span>:C <span style="color: rgb(42, 161, 152);">08</span> Nov <span style="color: rgb(42, 161, 152);">08</span>:<span style="color: rgb(42, 161, 152);">17</span>:<span style="color: rgb(42, 161, 152);">21.431</span> # Warning: no config file specified, using the <span style="color: rgb(133, 153, 0);">default</span> config. In order to specify a config file use redis-server /path/to/redis.conf
+<span style="color: rgb(42, 161, 152);">86750</span>:M <span style="color: rgb(42, 161, 152);">08</span> Nov <span style="color: rgb(42, 161, 152);">08</span>:<span style="color: rgb(42, 161, 152);">17</span>:<span style="color: rgb(42, 161, 152);">21.433</span> * Increased maximum number <span style="color: rgb(133, 153, 0);">of</span> open files to <span style="color: rgb(42, 161, 152);">10032</span> (it was originally set to <span style="color: rgb(42, 161, 152);">256</span>).
+                _._                                                  
+           _.-<span style="color: rgb(42, 161, 152);">``</span>__ <span style="color: rgb(42, 161, 152);">''</span>-._                                             
+      _.-<span style="color: rgb(42, 161, 152);">``</span>    <span style="color: rgb(42, 161, 152);">`.  `</span>_.  <span style="color: rgb(42, 161, 152);">''</span>-._           Redis <span style="color: rgb(42, 161, 152);">3.2</span><span style="color: rgb(42, 161, 152);">.5</span> (<span style="color: rgb(42, 161, 152);">00000000</span>/<span style="color: rgb(42, 161, 152);">0</span>) <span style="color: rgb(42, 161, 152);">64</span> bit
+  .-<span style="color: rgb(42, 161, 152);">``</span> .-<span style="color: rgb(42, 161, 152);">``</span><span style="color: rgb(42, 161, 152);">`.  `</span><span style="color: rgb(42, 161, 152);">``</span>\/    _.,_ <span style="color: rgb(42, 161, 152);">''</span>-._                                   
+ (    <span style="color: rgb(42, 161, 152);">'      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'</span><span style="color: rgb(42, 161, 152);">` _.-'|     Port: 6379
+ |    `</span>-._   <span style="color: rgb(42, 161, 152);">`._    /     _.-'    |     PID: 86750
+  `</span>-._    <span style="color: rgb(42, 161, 152);">`-._  `</span>-./  _.-<span style="color: rgb(42, 161, 152);">'    _.-'</span>                                   
+ |<span style="color: rgb(42, 161, 152);">`-._`</span>-._    <span style="color: rgb(42, 161, 152);">`-.__.-'    _.-'_.-'|                                  
+ |    `</span>-._<span style="color: rgb(42, 161, 152);">`-._        _.-'_.-'    |           http://redis.io        
+  `</span>-._    <span style="color: rgb(42, 161, 152);">`-._`</span>-.__.-<span style="color: rgb(42, 161, 152);">'_.-'</span>    _.-<span style="color: rgb(42, 161, 152);">'                                   
+ |`-._`-._    `-.__.-'</span>    _.-<span style="color: rgb(42, 161, 152);">'_.-'</span>|                                  
+ |    <span style="color: rgb(42, 161, 152);">`-._`</span>-._        _.-<span style="color: rgb(42, 161, 152);">'_.-'</span>    |                                  
+  <span style="color: rgb(42, 161, 152);">`-._    `</span>-._<span style="color: rgb(42, 161, 152);">`-.__.-'_.-'    _.-'                                   
+      `</span>-._    <span style="color: rgb(42, 161, 152);">`-.__.-'    _.-'                                       
+          `</span>-._        _.-<span style="color: rgb(42, 161, 152);">'                                           
+              `-.__.-'</span>                                               
+
+<span style="color: rgb(42, 161, 152);">86750</span>:M <span style="color: rgb(42, 161, 152);">08</span> Nov <span style="color: rgb(42, 161, 152);">08</span>:<span style="color: rgb(42, 161, 152);">17</span>:<span style="color: rgb(42, 161, 152);">21.434</span> # Server started, Redis version <span style="color: rgb(42, 161, 152);">3.2</span><span style="color: rgb(42, 161, 152);">.5</span>
+<span style="color: rgb(42, 161, 152);">86750</span>:M <span style="color: rgb(42, 161, 152);">08</span> Nov <span style="color: rgb(42, 161, 152);">08</span>:<span style="color: rgb(42, 161, 152);">17</span>:<span style="color: rgb(42, 161, 152);">21.434</span> * The server is now ready to accept connections on port <span style="color: rgb(42, 161, 152);">6379</span></code></pre></div><p>  <strong>Close Redis</strong> with <code>control</code> + <code>c</code> to quit</p></li></ul></li><li><p>Install Celery + Redis in your virtualenv.</p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="pip install &quot;celery[redis]&quot;
+pip install redis
+pip install django-celery-beat
+pip install django-celery-results
+pip freeze &gt; requirements.txt">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code>pip install <span style="color: rgb(42, 161, 152);">"celery[redis]"</span>
+pip install redis
+pip install django-celery-beat
+pip install django-celery-results
+pip freeze &gt; requirements.txt</code></pre></div></li><li><p>Update Django <code>settings.py</code>:</p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="INSTALLED_APPS = [
+    &#39;django.contrib.admin&#39;,
+    &#39;django.contrib.auth&#39;,
+    &#39;django.contrib.contenttypes&#39;,
+    &#39;django.contrib.sessions&#39;,
+    &#39;django.contrib.messages&#39;,
+    &#39;django.contrib.staticfiles&#39;,
+    &#39;django_celery_beat&#39;,
+    &#39;django_celery_results&#39;,
+]
+
+CELERY_BROKER_URL = &#39;redis://localhost:6379&#39;
+CELERY_RESULT_BACKEND = &#39;redis://localhost:6379&#39;
+CELERY_ACCEPT_CONTENT = [&#39;application/json&#39;]
+CELERY_TASK_SERIALIZER = &#39;json&#39;
+CELERY_RESULT_SERIALIZER = &#39;json&#39;
+CELERY_TIMEZONE = TIME_ZONE">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code>INSTALLED_APPS = [
+    <span style="color: rgb(42, 161, 152);">'django.contrib.admin'</span>,
+    <span style="color: rgb(42, 161, 152);">'django.contrib.auth'</span>,
+    <span style="color: rgb(42, 161, 152);">'django.contrib.contenttypes'</span>,
+    <span style="color: rgb(42, 161, 152);">'django.contrib.sessions'</span>,
+    <span style="color: rgb(42, 161, 152);">'django.contrib.messages'</span>,
+    <span style="color: rgb(42, 161, 152);">'django.contrib.staticfiles'</span>,
+    <span style="color: rgb(42, 161, 152);">'django_celery_beat'</span>,
+    <span style="color: rgb(42, 161, 152);">'django_celery_results'</span>,
+]
+
+CELERY_BROKER_URL = <span style="color: rgb(42, 161, 152);">'redis://localhost:6379'</span>
+CELERY_RESULT_BACKEND = <span style="color: rgb(42, 161, 152);">'redis://localhost:6379'</span>
+CELERY_ACCEPT_CONTENT = [<span style="color: rgb(42, 161, 152);">'application/json'</span>]
+CELERY_TASK_SERIALIZER = <span style="color: rgb(42, 161, 152);">'json'</span>
+CELERY_RESULT_SERIALIZER = <span style="color: rgb(42, 161, 152);">'json'</span>
+CELERY_TIMEZONE = TIME_ZONE</code></pre></div></li><li><p>Create <code>celery.py</code> to setup <code>Celery app</code>:</p><ul><li>Navigate to root project config module (where <code>settings</code> and <code>urls</code> modules are)</li><li>Create a <code>celery.py</code> file with the contents:</li></ul><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="from __future__ import absolute_import, unicode_literals
+import os
+from celery import Celery
+
+# set the default Django settings module for the &#39;celery&#39; program.
+os.environ.setdefault(&#39;DJANGO_SETTINGS_MODULE&#39;, &#39;red.settings&#39;)
+
+app = Celery(&#39;proj&#39;)
+
+# Using a string here means the worker don&#39;t have to serialize
+# the configuration object to child processes.
+# - namespace=&#39;CELERY&#39; means all celery-related configuration keys
+#   should have a `CELERY_` prefix.
+app.config_from_object(&#39;django.conf:settings&#39;, namespace=&#39;CELERY&#39;)
+
+# Load task modules from all registered Django app configs.
+app.autodiscover_tasks()
+
+@app.task(bind=True)
+def debug_task(self):
+    print(&#39;Request: {0!r}&#39;.format(self.request))">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code><span style="color: rgb(133, 153, 0);">from</span> __future__ <span style="color: rgb(133, 153, 0);">import</span> absolute_import, unicode_literals
+<span style="color: rgb(133, 153, 0);">import</span> os
+<span style="color: rgb(133, 153, 0);">from</span> celery <span style="color: rgb(133, 153, 0);">import</span> Celery
+
+# set the <span style="color: rgb(133, 153, 0);">default</span> Django settings <span style="color: rgb(220, 50, 47);">module</span> <span style="color: rgb(133, 153, 0);">for</span> the <span style="color: rgb(42, 161, 152);">'celery'</span> program.
+os.environ.setdefault(<span style="color: rgb(42, 161, 152);">'DJANGO_SETTINGS_MODULE'</span>, <span style="color: rgb(42, 161, 152);">'red.settings'</span>)
+
+app = Celery(<span style="color: rgb(42, 161, 152);">'proj'</span>)
+
+# Using a string here means the worker don<span style="color: rgb(42, 161, 152);">'t have to serialize
+# the configuration object to child processes.
+# - namespace='</span>CELERY<span style="color: rgb(42, 161, 152);">' means all celery-related configuration keys
+#   should have a `CELERY_` prefix.
+app.config_from_object('</span>django.conf:settings<span style="color: rgb(42, 161, 152);">', namespace='</span>CELERY<span style="color: rgb(42, 161, 152);">')
+
+# Load task modules from all registered Django app configs.
+app.autodiscover_tasks()
+
+@app.task(bind=True)
+def debug_task(self):
+    print('</span>Request: {<span style="color: rgb(42, 161, 152);">0</span>!r}<span style="color: rgb(42, 161, 152);">'.format(self.request))</span></code></pre></div></li><li><p>Update project conf folder's <code>__init__.py</code> file:</p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="# cfehome/src/cfehome/__init__.py
+from __future__ import absolute_import
+
+# This will make sure the app is always imported when
+# Django starts so that shared_task will use this app.
+from .celery import app as celery_app  # noqa">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code># cfehome/src/cfehome/__init__.py
+<span style="color: rgb(133, 153, 0);">from</span> __future__ <span style="color: rgb(133, 153, 0);">import</span> absolute_import
+
+# This will make sure the app is always imported when
+# Django starts so that shared_task will use <span style="color: rgb(133, 153, 0);">this</span> app.
+from .celery <span style="color: rgb(133, 153, 0);">import</span> app <span style="color: rgb(133, 153, 0);">as</span> celery_app  # noqa</code></pre></div></li><li><p>Create <code>tasks.py</code> in your Django app (a valid app in <code>INSTALLED_APPS</code>):</p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="from __future__ import absolute_import, unicode_literals
+import random
+from celery.decorators import task
+
+@task(name=&quot;sum_two_numbers&quot;)
+def add(x, y):
+    return x + y
+
+@task(name=&quot;multiply_two_numbers&quot;)
+def mul(x, y):
+    total = x * (y * random.randint(3, 100))
+    return total
+
+@task(name=&quot;sum_list_numbers&quot;)
+def xsum(numbers):
+    return sum(numbers)">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code><span style="color: rgb(133, 153, 0);">from</span> __future__ <span style="color: rgb(133, 153, 0);">import</span> absolute_import, unicode_literals
+<span style="color: rgb(133, 153, 0);">import</span> random
+<span style="color: rgb(133, 153, 0);">from</span> celery.decorators <span style="color: rgb(133, 153, 0);">import</span> task
+
+@task(name=<span style="color: rgb(42, 161, 152);">"sum_two_numbers"</span>)
+def add(x, y):
+    <span style="color: rgb(133, 153, 0);">return</span> x + y
+
+@task(name=<span style="color: rgb(42, 161, 152);">"multiply_two_numbers"</span>)
+def mul(x, y):
+    total = x * (y * random.randint(<span style="color: rgb(42, 161, 152);">3</span>, <span style="color: rgb(42, 161, 152);">100</span>))
+    <span style="color: rgb(133, 153, 0);">return</span> total
+
+@task(name=<span style="color: rgb(42, 161, 152);">"sum_list_numbers"</span>)
+def xsum(numbers):
+    <span style="color: rgb(133, 153, 0);">return</span> sum(numbers)</code></pre></div></li><li><p>Run migrations: </p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="python manage.py makemigrations
+python manage.py migrate">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code>python manage.py makemigrations
+python manage.py migrate</code></pre></div></li><li><p>Test tasks:</p><ol><li><p>Open a terminal window, <code>Run Celery</code> with in your <code>project root</code> where <code>manage.py</code> lives:</p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="celery -A yourproject worker -l info
+# like 
+celery -A cfehome worker -l info">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code>celery -A yourproject worker -l info
+# like 
+celery -A cfehome worker -l info</code></pre></div></li><li><p>Open another terminal window, in your Django project <code>python manage.py shell</code>:</p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="&gt;&gt;&gt; from yourapp.tasks import add, mul, xsum
+&gt;&gt;&gt; add(1,3)
+4
+&gt;&gt;&gt; add.delay(1,3)
+&lt;AsyncResult: 7bb03f9a-5702-4661-b737-2bc54ed9f558&gt;">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code>&gt;&gt;&gt; <span style="color: rgb(133, 153, 0);">from</span> yourapp.tasks <span style="color: rgb(133, 153, 0);">import</span> add, mul, xsum
+&gt;&gt;&gt; add(<span style="color: rgb(42, 161, 152);">1</span>,<span style="color: rgb(42, 161, 152);">3</span>)
+<span style="color: rgb(42, 161, 152);">4</span>
+&gt;&gt;&gt; add.delay(<span style="color: rgb(42, 161, 152);">1</span>,<span style="color: rgb(42, 161, 152);">3</span>)
+&lt;AsyncResult: <span style="color: rgb(42, 161, 152);">7</span>bb03f9a<span style="color: rgb(42, 161, 152);">-5702</span><span style="color: rgb(42, 161, 152);">-4661</span>-b737<span style="color: rgb(42, 161, 152);">-2</span>bc54ed9f558&gt;</code></pre></div><p>If you look at your celery worker, you should see something like:</p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="[2016-11-08 22:05:22,686: INFO/PoolWorker-5] Task sum_two_numbers[7bb03f9a-5702-4661-b737-2bc54ed9f558] succeeded in 0.0004559689841698855s: 21">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code>[<span style="color: rgb(42, 161, 152);">2016</span><span style="color: rgb(42, 161, 152);">-11</span><span style="color: rgb(42, 161, 152);">-08</span> <span style="color: rgb(42, 161, 152);">22</span>:<span style="color: rgb(42, 161, 152);">05</span>:<span style="color: rgb(42, 161, 152);">22</span>,<span style="color: rgb(42, 161, 152);">686</span>: INFO/PoolWorker<span style="color: rgb(42, 161, 152);">-5</span>] Task sum_two_numbers[<span style="color: rgb(42, 161, 152);">7</span>bb03f9a<span style="color: rgb(42, 161, 152);">-5702</span><span style="color: rgb(42, 161, 152);">-4661</span>-b737<span style="color: rgb(42, 161, 152);">-2</span>bc54ed9f558] succeeded <span style="color: rgb(133, 153, 0);">in</span> <span style="color: rgb(42, 161, 152);">0.0004559689841698855</span>s: <span style="color: rgb(42, 161, 152);">21</span></code></pre></div></li></ol></li><li><p>Setup Schedule to Run Tasks <a target="_self" href="http://docs.celeryproject.org/en/latest/userguide/periodic-tasks.html">Docs</a>:</p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="# celery.py
+
+from celery.schedules import crontab
+app.conf.beat_schedule = {
+    &#39;add-every-minute-contrab&#39;: {
+        &#39;task&#39;: &#39;multiply_two_numbers&#39;,
+        &#39;schedule&#39;: crontab(),
+        &#39;args&#39;: (16, 16),
+    },
+    &#39;add-every-5-seconds&#39;: {
+        &#39;task&#39;: &#39;multiply_two_numbers&#39;,
+        &#39;schedule&#39;: 5.0,
+        &#39;args&#39;: (16, 16)
+    },
+    &#39;add-every-30-seconds&#39;: {
+        &#39;task&#39;: &#39;tasks.add&#39;,
+        &#39;schedule&#39;: 30.0,
+        &#39;args&#39;: (16, 16)
+    },
+}">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code># celery.py
+
+<span style="color: rgb(133, 153, 0);">from</span> celery.schedules <span style="color: rgb(133, 153, 0);">import</span> crontab
+app.conf.beat_schedule = {
+    <span style="color: rgb(42, 161, 152);">'add-every-minute-contrab'</span>: {
+        <span style="color: rgb(42, 161, 152);">'task'</span>: <span style="color: rgb(42, 161, 152);">'multiply_two_numbers'</span>,
+        <span style="color: rgb(42, 161, 152);">'schedule'</span>: crontab(),
+        <span style="color: rgb(42, 161, 152);">'args'</span>: (<span style="color: rgb(42, 161, 152);">16</span>, <span style="color: rgb(42, 161, 152);">16</span>),
+    },
+    <span style="color: rgb(42, 161, 152);">'add-every-5-seconds'</span>: {
+        <span style="color: rgb(42, 161, 152);">'task'</span>: <span style="color: rgb(42, 161, 152);">'multiply_two_numbers'</span>,
+        <span style="color: rgb(42, 161, 152);">'schedule'</span>: <span style="color: rgb(42, 161, 152);">5.0</span>,
+        <span style="color: rgb(42, 161, 152);">'args'</span>: (<span style="color: rgb(42, 161, 152);">16</span>, <span style="color: rgb(42, 161, 152);">16</span>)
+    },
+    <span style="color: rgb(42, 161, 152);">'add-every-30-seconds'</span>: {
+        <span style="color: rgb(42, 161, 152);">'task'</span>: <span style="color: rgb(42, 161, 152);">'tasks.add'</span>,
+        <span style="color: rgb(42, 161, 152);">'schedule'</span>: <span style="color: rgb(42, 161, 152);">30.0</span>,
+        <span style="color: rgb(42, 161, 152);">'args'</span>: (<span style="color: rgb(42, 161, 152);">16</span>, <span style="color: rgb(42, 161, 152);">16</span>)
+    },
+}</code></pre></div></li><li><p>Test Scheduled Tasks With Celery Beat:
+Open another <code>Terminal</code> window to run scheduled tasks:</p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="celery -A cfehome beat -l info">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code>celery -A cfehome beat -l info</code></pre></div><p>Or do the following to run the scheduled items from Django database:</p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="celery -A cfehome beat -l info -S django">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code>celery -A cfehome beat -l info -S django</code></pre></div></li><li><p>4 Processes running:</p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="# django
+$ python manage.py runserver
+
+# celery worker
+$ celery -A cfehome worker -l info
+
+# celery beat
+$ celery -A cfehome beat -l info -S django
+
+# redis server
+$ redis-server">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code># django
+$ python manage.py runserver
+
+# celery worker
+$ celery -A cfehome worker -l info
+
+# celery beat
+$ celery -A cfehome beat -l info -S django
+
+# redis server
+$ redis-server</code></pre></div></li></ol><h3>Launching on Heroku:</h3><p><strong>Note</strong> - To run a <code>beat</code> server like above, you will need a paid account.</p><ol><li><p>Setup Procfile:</p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="web: gunicorn cfehome.wsgi --log-file -
+worker: celery -A cfehome worker
+beat: celery -A cfehome beat -S django">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code>web: gunicorn cfehome.wsgi --log-file -
+worker: celery -A cfehome worker
+beat: celery -A cfehome beat -S django</code></pre></div></li><li><p>Setup <code>production.py</code>:</p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="INSTALLED_APPS = [
+     # ... default apps
+    &#39;django_celery_beat&#39;,
+    &#39;django_celery_results&#39;,
+    ## your apps
+]
+CELERY_BROKER_URL=os.environ[&#39;REDIS_URL&#39;]
+CELERY_RESULT_BACKEND=os.environ[&#39;REDIS_URL&#39;]
+
+CELERY_ACCEPT_CONTENT = [&#39;application/json&#39;]
+CELERY_TASK_SERIALIZER = &#39;json&#39;
+CELERY_RESULT_SERIALIZER = &#39;json&#39;
+CELERY_TIMEZONE = TIME_ZONE">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code>INSTALLED_APPS = [
+     # ... default apps
+    <span style="color: rgb(42, 161, 152);">'django_celery_beat'</span>,
+    <span style="color: rgb(42, 161, 152);">'django_celery_results'</span>,
+    ## your apps
+]
+CELERY_BROKER_URL=os.environ[<span style="color: rgb(42, 161, 152);">'REDIS_URL'</span>]
+CELERY_RESULT_BACKEND=os.environ[<span style="color: rgb(42, 161, 152);">'REDIS_URL'</span>]
+
+CELERY_ACCEPT_CONTENT = [<span style="color: rgb(42, 161, 152);">'application/json'</span>]
+CELERY_TASK_SERIALIZER = <span style="color: rgb(42, 161, 152);">'json'</span>
+CELERY_RESULT_SERIALIZER = <span style="color: rgb(42, 161, 152);">'json'</span>
+CELERY_TIMEZONE = TIME_ZONE</code></pre></div></li><li><p>Setup <a target="_self" href="https://elements.heroku.com/addons/heroku-redis">heroku-redis</a>:</p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="heroku addons:create heroku-redis:hobby-dev">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code>heroku addons:create heroku-redis:hobby-dev</code></pre></div></li><li><p>Upgrade Heroku Account to <code>Professional</code></p></li><li><p>Update <code>requirements.txt</code></p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="pip freeze &gt; requirements.txt">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code>pip freeze &gt; requirements.txt</code></pre></div></li><li><p>Commit, Push &amp; Migrate</p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="git add --all
+git commit -m &quot;Add Celery + Redis to Django&quot;
+git push heroku master
+heroku run python manage.py migrate">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code>git add --all
+git commit -m <span style="color: rgb(42, 161, 152);">"Add Celery + Redis to Django"</span>
+git push heroku master
+heroku run python manage.py migrate</code></pre></div></li><li><p>Scale Up Services:</p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="heroku ps:scale web=1 worker=1 beat=1">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code>heroku ps:scale web=<span style="color: rgb(42, 161, 152);">1</span> worker=<span style="color: rgb(42, 161, 152);">1</span> beat=<span style="color: rgb(42, 161, 152);">1</span></code></pre></div></li><li><p>Restart Server:</p><div><button title="" type="button" class="btn btn-outline-secondary btn-sm rounded-0 clipboard-btn" data-clipboard-text="heroku restart">Copy</button><pre style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(0, 43, 54); color: rgb(131, 148, 150);"><code>heroku restart</code></pre></div></li></ol></div><div><div class="row"><div class="col-md-9 col-12"><h1>Comments</h1><div><form><textarea rows="4" class="form-control cfe-cmt-textarea mt-2" name="content" placeholder="Write your comment/question"></textarea><div class="d-flex flex-row"><div class="col ml-auto text-right px-0"><button type="submit" class="btn btn-primary mt-2"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="paper-plane" class="svg-inline--fa fa-paper-plane fa-w-16 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"></path></svg> Comment</button></div></div></form></div><div><div id="comment-row-14094" class="row my-4 comment-row-14094 undefined"><div class="comment-avatar col-2 text-center"><a class="undefined" href="https://www.codingforentrepreneurs.com/u/grigs"><div class="text-avatar "><span>G</span></div></a></div><div class="comment-content col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/grigs/">grigs</a></b><span class="comment-gray ml-2">6&nbsp;months, 2&nbsp;weeks ago</span><small class="comment-gray mx-2"><a class="undefined" href="https://www.codingforentrepreneurs.com/comments/14094">Thread</a></small></div></div><div class="comment-body mb-4" data-id="14094"><div><div class="undefined   "><p>Hi! Thank you for this! Any reason why you suggest we upgrade our Heroku account to Professional? I'm currently using Hobby.</p></div><div> <div class="row my-4 border-top pt-4 undefined"><div class="comment-avatar col-2 text-center "><a class="undefined" href="https://www.codingforentrepreneurs.com/u/jmitchel3"><div class="text-avatar text-avatar-img"><img class="mx-auto img-fluid rounded" src="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/jmitchel3.jpg" alt="avatar"></div></a></div><div class="col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/jmitchel3/">jmitchel3</a></b><span class="comment-gray ml-2">6&nbsp;months, 2&nbsp;weeks ago</span></div></div><div class="comment-body mb-4 " data-id="14101"><div class="undefined   "><p>I think to allow for <code>heroku ps:scale web=1 worker=1 beat=1</code></p></div></div></div></div></div><div><form><textarea rows="2" class="form-control cfe-cmt-textarea mt-2" name="content" placeholder="Write your reply"></textarea><div class="d-flex flex-row"><div class="col ml-auto text-right px-0"><button type="submit" class="btn btn-primary mt-2"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="paper-plane" class="svg-inline--fa fa-paper-plane fa-w-16 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"></path></svg> Reply</button></div></div></form></div></div></div></div></div></div><div><div id="comment-row-12411" class="row my-4 comment-row-12411 undefined"><div class="comment-avatar col-2 text-center"><a class="undefined" href="https://www.codingforentrepreneurs.com/u/shekharnunia"><div class="text-avatar "><span>S</span></div></a></div><div class="comment-content col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/shekharnunia/">shekharnunia</a></b><span class="comment-gray ml-2">1&nbsp;year ago</span><small class="comment-gray mx-2"><a class="undefined" href="https://www.codingforentrepreneurs.com/comments/12411">Thread</a></small></div></div><div class="comment-body mb-4" data-id="12411"><div><div class="undefined   "><p>Little correction on step 6
+git pus heroku master
+"pus" to push</p></div><div> <div class="row my-4 border-top pt-4 undefined"><div class="comment-avatar col-2 text-center "><a class="undefined" href="https://www.codingforentrepreneurs.com/u/jmitchel3"><div class="text-avatar text-avatar-img"><img class="mx-auto img-fluid rounded" src="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/jmitchel3.jpg" alt="avatar"></div></a></div><div class="col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/jmitchel3/">jmitchel3</a></b><span class="comment-gray ml-2">1&nbsp;year ago</span></div></div><div class="comment-body mb-4 " data-id="12428"><div class="undefined   "><p>Thank you!</p></div></div></div></div></div><div><form><textarea rows="2" class="form-control cfe-cmt-textarea mt-2" name="content" placeholder="Write your reply"></textarea><div class="d-flex flex-row"><div class="col ml-auto text-right px-0"><button type="submit" class="btn btn-primary mt-2"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="paper-plane" class="svg-inline--fa fa-paper-plane fa-w-16 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"></path></svg> Reply</button></div></div></form></div></div></div></div></div></div><div><div id="comment-row-11159" class="row my-4 comment-row-11159 undefined"><div class="comment-avatar col-2 text-center"><a class="undefined" href="https://www.codingforentrepreneurs.com/u/shiveshsky"><div class="text-avatar "><span>S</span></div></a></div><div class="comment-content col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/shiveshsky/">shiveshsky</a></b><span class="comment-gray ml-2">1&nbsp;year, 5&nbsp;months ago</span><small class="comment-gray mx-2"><a class="undefined" href="https://www.codingforentrepreneurs.com/comments/11159">Thread</a></small></div></div><div class="comment-body mb-4" data-id="11159"><div><div class="undefined   "><p>I have followed the steps but I am not able to run tasks when I call add.delay(), the python terminal gets stuck</p></div><div> <div class="row my-4 border-top pt-4 undefined"><div class="comment-avatar col-2 text-center "><a class="undefined" href="https://www.codingforentrepreneurs.com/u/jmitchel3"><div class="text-avatar text-avatar-img"><img class="mx-auto img-fluid rounded" src="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/jmitchel3.jpg" alt="avatar"></div></a></div><div class="col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/jmitchel3/">jmitchel3</a></b><span class="comment-gray ml-2">1&nbsp;year, 5&nbsp;months ago</span></div></div><div class="comment-body mb-4 " data-id="11162"><div class="undefined   "><p>Do you have redis running?</p></div></div></div></div></div><div><form><textarea rows="2" class="form-control cfe-cmt-textarea mt-2" name="content" placeholder="Write your reply"></textarea><div class="d-flex flex-row"><div class="col ml-auto text-right px-0"><button type="submit" class="btn btn-primary mt-2"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="paper-plane" class="svg-inline--fa fa-paper-plane fa-w-16 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"></path></svg> Reply</button></div></div></form></div></div></div></div></div></div><div><div id="comment-row-11156" class="row my-4 comment-row-11156 undefined"><div class="comment-avatar col-2 text-center"><a class="undefined" href="https://www.codingforentrepreneurs.com/u/RyleySill93"><div class="text-avatar "><span>R</span></div></a></div><div class="comment-content col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/RyleySill93/">RyleySill93</a></b><span class="comment-gray ml-2">1&nbsp;year, 5&nbsp;months ago</span><small class="comment-gray mx-2"><a class="undefined" href="https://www.codingforentrepreneurs.com/comments/11156">Thread</a></small></div></div><div class="comment-body mb-4" data-id="11156"><div><div class="undefined   "><p>I'm stuck on step #9. When I called add.delay(1,3) it just hangs there and doesn't return an AsyncResult. There's no indication on my celery worker that I've called the function but both the celery worker and redis-server are running fine. Ideas?</p></div><div><form><textarea rows="2" class="form-control cfe-cmt-textarea mt-2" name="content" placeholder="Write your reply"></textarea><div class="d-flex flex-row"><div class="col ml-auto text-right px-0"><button type="submit" class="btn btn-primary mt-2"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="paper-plane" class="svg-inline--fa fa-paper-plane fa-w-16 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"></path></svg> Reply</button></div></div></form></div></div></div></div></div></div><div><div id="comment-row-10185" class="row my-4 comment-row-10185 undefined"><div class="comment-avatar col-2 text-center"><a class="undefined" href="https://www.codingforentrepreneurs.com/u/GiuseppeMinisteri"><div class="text-avatar "><span>G</span></div></a></div><div class="comment-content col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/GiuseppeMinisteri/">GiuseppeMinisteri</a></b><span class="comment-gray ml-2">1&nbsp;year, 8&nbsp;months ago</span><small class="comment-gray mx-2"><a class="undefined" href="https://www.codingforentrepreneurs.com/comments/10185">Thread</a></small></div></div><div class="comment-body mb-4" data-id="10185"><div><div class="undefined   "><p>As a beginner in BE, celery and django development, this guide saved my life!
+Thank you!</p></div><div> <div class="row my-4 border-top pt-4 undefined"><div class="comment-avatar col-2 text-center "><a class="undefined" href="https://www.codingforentrepreneurs.com/u/jmitchel3"><div class="text-avatar text-avatar-img"><img class="mx-auto img-fluid rounded" src="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/jmitchel3.jpg" alt="avatar"></div></a></div><div class="col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/jmitchel3/">jmitchel3</a></b><span class="comment-gray ml-2">1&nbsp;year, 8&nbsp;months ago</span></div></div><div class="comment-body mb-4 " data-id="10186"><div class="undefined   "><p>Glad to hear it! Cheers</p></div></div></div></div></div><div><form><textarea rows="2" class="form-control cfe-cmt-textarea mt-2" name="content" placeholder="Write your reply"></textarea><div class="d-flex flex-row"><div class="col ml-auto text-right px-0"><button type="submit" class="btn btn-primary mt-2"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="paper-plane" class="svg-inline--fa fa-paper-plane fa-w-16 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"></path></svg> Reply</button></div></div></form></div></div></div></div></div></div><div><div id="comment-row-10083" class="row my-4 comment-row-10083 undefined"><div class="comment-avatar col-2 text-center"><a class="undefined" href="https://www.codingforentrepreneurs.com/u/BFMarks"><div class="text-avatar "><span>B</span></div></a></div><div class="comment-content col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/BFMarks/">BFMarks</a></b><span class="comment-gray ml-2">1&nbsp;year, 9&nbsp;months ago</span><small class="comment-gray mx-2"><a class="undefined" href="https://www.codingforentrepreneurs.com/comments/10083">Thread</a></small></div></div><div class="comment-body mb-4" data-id="10083"><div><div class="undefined   "><p>Best Tutorial out for Heroku / Django / Celery / Redis!  Thank you sir.</p></div><div> <div class="row my-4 border-top pt-4 undefined"><div class="comment-avatar col-2 text-center "><a class="undefined" href="https://www.codingforentrepreneurs.com/u/jmitchel3"><div class="text-avatar text-avatar-img"><img class="mx-auto img-fluid rounded" src="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/jmitchel3.jpg" alt="avatar"></div></a></div><div class="col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/jmitchel3/">jmitchel3</a></b><span class="comment-gray ml-2">1&nbsp;year, 9&nbsp;months ago</span></div></div><div class="comment-body mb-4 " data-id="10084"><div class="undefined   "><p>Thank you!</p></div></div></div></div></div><div><form><textarea rows="2" class="form-control cfe-cmt-textarea mt-2" name="content" placeholder="Write your reply"></textarea><div class="d-flex flex-row"><div class="col ml-auto text-right px-0"><button type="submit" class="btn btn-primary mt-2"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="paper-plane" class="svg-inline--fa fa-paper-plane fa-w-16 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"></path></svg> Reply</button></div></div></form></div></div></div></div></div></div><div><div id="comment-row-8881" class="row my-4 comment-row-8881 undefined"><div class="comment-avatar col-2 text-center"><a class="undefined" href="https://www.codingforentrepreneurs.com/u/busla"><div class="text-avatar "><span>B</span></div></a></div><div class="comment-content col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/busla/">busla</a></b><span class="comment-gray ml-2">2&nbsp;years, 1&nbsp;month ago</span><small class="comment-gray mx-2"><a class="undefined" href="https://www.codingforentrepreneurs.com/comments/8881">Thread</a></small></div></div><div class="comment-body mb-4" data-id="8881"><div><div class="undefined   "><p>Why are you installing django-celery-results? It´s not being used in your examples.</p></div><div> <div class="row my-4 border-top pt-4 undefined"><div class="comment-avatar col-2 text-center "><a class="undefined" href="https://www.codingforentrepreneurs.com/u/jmitchel3"><div class="text-avatar text-avatar-img"><img class="mx-auto img-fluid rounded" src="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/jmitchel3.jpg" alt="avatar"></div></a></div><div class="col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/jmitchel3/">jmitchel3</a></b><span class="comment-gray ml-2">2&nbsp;years, 1&nbsp;month ago</span></div></div><div class="comment-body mb-4 " data-id="8904"><div class="undefined   "><p>It might be from their docs is why.</p></div></div></div></div></div><div><form><textarea rows="2" class="form-control cfe-cmt-textarea mt-2" name="content" placeholder="Write your reply"></textarea><div class="d-flex flex-row"><div class="col ml-auto text-right px-0"><button type="submit" class="btn btn-primary mt-2"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="paper-plane" class="svg-inline--fa fa-paper-plane fa-w-16 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"></path></svg> Reply</button></div></div></form></div></div></div></div></div></div><div><div id="comment-row-8118" class="row my-4 comment-row-8118 undefined"><div class="comment-avatar col-2 text-center"><a class="undefined" href="https://www.codingforentrepreneurs.com/u/varunbansaldev"><div class="text-avatar "><span>V</span></div></a></div><div class="comment-content col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/varunbansaldev/">varunbansaldev</a></b><span class="comment-gray ml-2">2&nbsp;years, 4&nbsp;months ago</span><small class="comment-gray mx-2"><a class="undefined" href="https://www.codingforentrepreneurs.com/comments/8118">Thread</a></small></div></div><div class="comment-body mb-4" data-id="8118"><div><div class="undefined   "><p>Hi</p><p>I have made enabled=False to a scheduled periodic task through Django admin panel, but the task is still running after every period (as defined in the disabled task). How do I disable a particular periodic task without messing any other period task?</p><p>Regards!</p></div><div><form><textarea rows="2" class="form-control cfe-cmt-textarea mt-2" name="content" placeholder="Write your reply"></textarea><div class="d-flex flex-row"><div class="col ml-auto text-right px-0"><button type="submit" class="btn btn-primary mt-2"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="paper-plane" class="svg-inline--fa fa-paper-plane fa-w-16 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"></path></svg> Reply</button></div></div></form></div></div></div></div></div></div><div><div id="comment-row-8117" class="row my-4 comment-row-8117 undefined"><div class="comment-avatar col-2 text-center"><a class="undefined" href="https://www.codingforentrepreneurs.com/u/varunbansaldev"><div class="text-avatar "><span>V</span></div></a></div><div class="comment-content col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/varunbansaldev/">varunbansaldev</a></b><span class="comment-gray ml-2">2&nbsp;years, 4&nbsp;months ago</span><small class="comment-gray mx-2"><a class="undefined" href="https://www.codingforentrepreneurs.com/comments/8117">Thread</a></small></div></div><div class="comment-body mb-4" data-id="8117"><div><div class="undefined   "><p>Hi</p><p>I have made enabled=False to a scheduled periodic task through Django admin panel, but the task is still running after every period (as defined in the disabled task). How do I disable a particular periodic task without messing any other period task?</p><p>Regards!</p></div><div> <div class="row my-4 border-top pt-4 undefined"><div class="comment-avatar col-2 text-center "><a class="undefined" href="https://www.codingforentrepreneurs.com/u/jmitchel3"><div class="text-avatar text-avatar-img"><img class="mx-auto img-fluid rounded" src="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/jmitchel3.jpg" alt="avatar"></div></a></div><div class="col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/jmitchel3/">jmitchel3</a></b><span class="comment-gray ml-2">2&nbsp;years, 4&nbsp;months ago</span></div></div><div class="comment-body mb-4 " data-id="8119"><div class="undefined   "><p>Did you restart your server and worker?</p></div></div></div></div></div><div><form><textarea rows="2" class="form-control cfe-cmt-textarea mt-2" name="content" placeholder="Write your reply"></textarea><div class="d-flex flex-row"><div class="col ml-auto text-right px-0"><button type="submit" class="btn btn-primary mt-2"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="paper-plane" class="svg-inline--fa fa-paper-plane fa-w-16 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"></path></svg> Reply</button></div></div></form></div></div></div></div></div></div><div><div id="comment-row-8116" class="row my-4 comment-row-8116 undefined"><div class="comment-avatar col-2 text-center"><a class="undefined" href="https://www.codingforentrepreneurs.com/u/varunbansaldev"><div class="text-avatar "><span>V</span></div></a></div><div class="comment-content col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/varunbansaldev/">varunbansaldev</a></b><span class="comment-gray ml-2">2&nbsp;years, 4&nbsp;months ago</span><small class="comment-gray mx-2"><a class="undefined" href="https://www.codingforentrepreneurs.com/comments/8116">Thread</a></small></div></div><div class="comment-body mb-4" data-id="8116"><div><div class="undefined   "><p>Hi</p><p>I have made enabled=False to a scheduled periodic task through Django admin panel, but the task is still running after every period (as defined in the disabled task). How do I disable a particular periodic task without messing any other period task?</p><p>Regards!</p></div><div><form><textarea rows="2" class="form-control cfe-cmt-textarea mt-2" name="content" placeholder="Write your reply"></textarea><div class="d-flex flex-row"><div class="col ml-auto text-right px-0"><button type="submit" class="btn btn-primary mt-2"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="paper-plane" class="svg-inline--fa fa-paper-plane fa-w-16 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"></path></svg> Reply</button></div></div></form></div></div></div></div></div></div><div><div id="comment-row-8115" class="row my-4 comment-row-8115 undefined"><div class="comment-avatar col-2 text-center"><a class="undefined" href="https://www.codingforentrepreneurs.com/u/varunbansaldev"><div class="text-avatar "><span>V</span></div></a></div><div class="comment-content col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/varunbansaldev/">varunbansaldev</a></b><span class="comment-gray ml-2">2&nbsp;years, 4&nbsp;months ago</span><small class="comment-gray mx-2"><a class="undefined" href="https://www.codingforentrepreneurs.com/comments/8115">Thread</a></small></div></div><div class="comment-body mb-4" data-id="8115"><div><div class="undefined   "><p>Hi</p><p>I have made enabled=False to a scheduled periodic task through Django admin panel, but the task is still running after every period (as defined in the disabled task). How do I disable a particular periodic task without messing any other period task?</p></div><div><form><textarea rows="2" class="form-control cfe-cmt-textarea mt-2" name="content" placeholder="Write your reply"></textarea><div class="d-flex flex-row"><div class="col ml-auto text-right px-0"><button type="submit" class="btn btn-primary mt-2"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="paper-plane" class="svg-inline--fa fa-paper-plane fa-w-16 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"></path></svg> Reply</button></div></div></form></div></div></div></div></div></div><div><div id="comment-row-7346" class="row my-4 comment-row-7346 undefined"><div class="comment-avatar col-2 text-center"><a class="undefined" href="https://www.codingforentrepreneurs.com/u/peterzhang"><div class="text-avatar "><span>P</span></div></a></div><div class="comment-content col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/peterzhang/">peterzhang</a></b><span class="comment-gray ml-2">2&nbsp;years, 8&nbsp;months ago</span><small class="comment-gray mx-2"><a class="undefined" href="https://www.codingforentrepreneurs.com/comments/7346">Thread</a></small></div></div><div class="comment-body mb-4" data-id="7346"><div><div class="undefined   "><p>Thanks so much for this post.</p><p>But one more question when I use first command in celery </p><p>It shows No module named red.settings</p></div><div> <div class="row my-4 border-top pt-4 undefined"><div class="comment-avatar col-2 text-center "><a class="undefined" href="https://www.codingforentrepreneurs.com/u/jmitchel3"><div class="text-avatar text-avatar-img"><img class="mx-auto img-fluid rounded" src="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/jmitchel3.jpg" alt="avatar"></div></a></div><div class="col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/jmitchel3/">jmitchel3</a></b><span class="comment-gray ml-2">2&nbsp;years, 8&nbsp;months ago</span></div></div><div class="comment-body mb-4 " data-id="7349"><div class="undefined   "><p>You're welcome. </p><p><code>red.settings</code> is referring to your <code>DJANGO_SETTINGS_MODULE</code> so yours will likely be different. it's the name that you put in <code>django-admin.py startproject &lt;yourprojectname&gt;</code></p></div></div></div></div></div><div><form><textarea rows="2" class="form-control cfe-cmt-textarea mt-2" name="content" placeholder="Write your reply"></textarea><div class="d-flex flex-row"><div class="col ml-auto text-right px-0"><button type="submit" class="btn btn-primary mt-2"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="paper-plane" class="svg-inline--fa fa-paper-plane fa-w-16 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"></path></svg> Reply</button></div></div></form></div></div></div></div></div></div><div><div id="comment-row-7253" class="row my-4 comment-row-7253 undefined"><div class="comment-avatar col-2 text-center"><a class="undefined" href="https://www.codingforentrepreneurs.com/u/shubham.aggarwal2020"><div class="text-avatar "><span>S</span></div></a></div><div class="comment-content col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/shubham.aggarwal2020/">shubham.aggarwal2020</a></b><span class="comment-gray ml-2">2&nbsp;years, 8&nbsp;months ago</span><small class="comment-gray mx-2"><a class="undefined" href="https://www.codingforentrepreneurs.com/comments/7253">Thread</a></small></div></div><div class="comment-body mb-4" data-id="7253"><div><div class="undefined   "><p>you need to explain each step.</p></div><div> <div class="row my-4 border-top pt-4 undefined"><div class="comment-avatar col-2 text-center "><a class="undefined" href="https://www.codingforentrepreneurs.com/u/jmitchel3"><div class="text-avatar text-avatar-img"><img class="mx-auto img-fluid rounded" src="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/jmitchel3.jpg" alt="avatar"></div></a></div><div class="col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/jmitchel3/">jmitchel3</a></b><span class="comment-gray ml-2">2&nbsp;years, 8&nbsp;months ago</span></div></div><div class="comment-body mb-4 " data-id="7254"><div class="undefined   "><p>We do! It's here: <a target="_self" href="https://www.codingforentrepreneurs.com/projects/time-tasks/">https://www.codingforentrepreneurs.com/projects/time-tasks/</a></p></div></div></div></div></div><div> <div class="row my-4 border-top pt-4 undefined"><div class="comment-avatar col-2 text-center "><a class="undefined" href="https://www.codingforentrepreneurs.com/u/sunil66ms"><div class="text-avatar "><span>S</span></div></a></div><div class="col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/sunil66ms/">sunil66ms</a></b><span class="comment-gray ml-2">8&nbsp;months, 2&nbsp;weeks ago</span></div></div><div class="comment-body mb-4 " data-id="13550"><div class="undefined   "><p>Is it possible to implement priority Q like this?</p></div></div></div></div></div><div> <div class="row my-4 border-top pt-4 undefined"><div class="comment-avatar col-2 text-center "><a class="undefined" href="https://www.codingforentrepreneurs.com/u/sandersuitup"><div class="text-avatar "><span>S</span></div></a></div><div class="col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/sandersuitup/">sandersuitup</a></b><span class="comment-gray ml-2">3&nbsp;months, 3&nbsp;weeks ago</span></div></div><div class="comment-body mb-4 " data-id="14727"><div class="undefined   "><p>This post is a very nice one to come back to when you start using celery/redis in the app. I wanted to share some learnings which might be a good add on to this post. </p><p>In our application we have a beat task every 15 seconds and had a lot of issues with more then one forkpoolworker. We check on changes in an API connection and every change creates a db object with a boolean set to True, to prevent it from getting calculated twice. We had 8 workers picking up one task which gave double calculations and the boolean was ignored. </p><p>We changed to one forkpoolworker with this line in our Procfile: 
+worker: celery -A project-name worker --concurrency 1 -l INFO
+We are still researching if this is the way to go, when we want to scale with more users.. this is a interesting post about the subject <a target="_self" href="https://redis.io/topics/distlock">https://redis.io/topics/distlock</a></p><p>Also we discovered memory/cache build on default on redis Heroku. We override the 25mb limit within a week and upgraded to premium0 with 50mb, which also was reached a few days later. 
+We changed from the default volatile-lru to allkeys-lru see:
+<a target="_self" href="https://devcenter.heroku.com/articles/heroku-redis#maxmemory-policy">https://devcenter.heroku.com/articles/heroku-redis#maxmemory-policy</a></p><p>Still in the process of researching these changes, but wanted to share these posts with everyone. Also we're curious if anybody has experience with these subjects and maybe tips about it.</p><p>Thank you Justin for all the knowledge researching and sharing!</p><p>Cheers</p></div></div></div></div></div><div> <div class="row my-4 border-top pt-4 undefined"><div class="comment-avatar col-2 text-center "><a class="undefined" href="https://www.codingforentrepreneurs.com/u/jmitchel3"><div class="text-avatar text-avatar-img"><img class="mx-auto img-fluid rounded" src="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/jmitchel3.jpg" alt="avatar"></div></a></div><div class="col-10"><div class="row"><div class="col-8"><b> <a class="undefined" href="https://www.codingforentrepreneurs.com/u/jmitchel3/">jmitchel3</a></b><span class="comment-gray ml-2">3&nbsp;months, 3&nbsp;weeks ago</span></div></div><div class="comment-body mb-4 " data-id="14730"><div class="undefined   "><p>Thanks for sharing @sandersuitup! Nice work finding what you need.</p></div></div></div></div></div><div><form><textarea rows="2" class="form-control cfe-cmt-textarea mt-2" name="content" placeholder="Write your reply"></textarea><div class="d-flex flex-row"><div class="col ml-auto text-right px-0"><button type="submit" class="btn btn-primary mt-2"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="paper-plane" class="svg-inline--fa fa-paper-plane fa-w-16 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M476 3.2L12.5 270.6c-18.1 10.4-15.8 35.6 2.2 43.2L121 358.4l287.3-253.2c5.5-4.9 13.3 2.6 8.6 8.3L176 407v80.5c0 23.6 28.5 32.9 42.5 15.8L282 426l124.6 52.2c14.2 6 30.4-2.9 33-18.2l72-432C515 7.8 493.3-6.8 476 3.2z"></path></svg> Reply</button></div></div></form></div></div></div></div></div></div></div></div></div></div><div class="col-md-3 d-none d-md-block" user="[object Object]"><form attributes="[object Object]" class="mb-3 null null"><div><input required="" name="email" id="email-capture" placeholder="Your email" type="email" class="undefined form-control" value=""><span></span></div><button type="submit" class="btn btn-warning btn-block mt-1 lead ">Get Started for Free <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-double-right" class="svg-inline--fa fa-angle-double-right fa-w-14 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34zm192-34l-136-136c-9.4-9.4-24.6-9.4-33.9 0l-22.6 22.6c-9.4 9.4-9.4 24.6 0 33.9l96.4 96.4-96.4 96.4c-9.4 9.4-9.4 24.6 0 33.9l22.6 22.6c9.4 9.4 24.6 9.4 33.9 0l136-136c9.4-9.2 9.4-24.4 0-33.8z"></path></svg></button></form><div class="mb-3"><div class="card"><div class="card-header">Trending</div><div class="list-group list-group-flush"><a class="list-group-item" href="https://www.codingforentrepreneurs.com/blog/install-python-django-on-windows">Install Python &amp; Django on Windows</a><a class="list-group-item" href="https://www.codingforentrepreneurs.com/blog/install-django-on-mac-or-linux">Install Python 3.6, Virtualenv, &amp; Django  on Mac</a><a class="list-group-item" href="https://www.codingforentrepreneurs.com/blog/install-tensorflow-gpu-windows-cuda-cudnn">Install Tensorflow GPU on Windows using CUDA and cuDNN</a><a class="list-group-item" href="https://www.codingforentrepreneurs.com/blog/install-opencv-3-for-python-on-windows">Install OpenCV 3 for Python on Windows</a><a class="list-group-item" href="https://www.codingforentrepreneurs.com/blog/how-to-create-a-custom-django-user-model">How to Create a Custom Django User Model</a></div></div></div><div class="mb-3"><div class="card"><div class="card-header">Featured</div><div class="list-group list-group-flush"><a class="list-group-item" href="https://www.codingforentrepreneurs.com/blog/opencv-python-extract-faces-rest-api-flask">OpenCV &amp; Python: Extract Faces with a REST API</a><a class="list-group-item" href="https://www.codingforentrepreneurs.com/blog/code-showdown-flask-v-django-bare-to-production">Flask v Django: Bare to Production ~ Code Showdown</a><a class="list-group-item" href="https://www.codingforentrepreneurs.com/blog/deploy-django-on-docker-to-heroku-opencv">Deploying Django on Docker to Heroku with OpenCV</a><a class="list-group-item" href="https://www.codingforentrepreneurs.com/blog/django-on-docker-a-simple-introduction">Django on Docker - A Simple Introduction</a><a class="list-group-item" href="https://www.codingforentrepreneurs.com/blog/simple-docker">Simple Docker Container Tutorial</a></div></div></div><div class="mb-3"><div class="card"><div class="card-header">Discover</div><div class="list-group list-group-flush"><a class="list-group-item" href="https://www.codingforentrepreneurs.com/blog/facebook-messenger-bot-with-django">Facebook Messenger Bot with Django</a><a class="list-group-item" href="https://www.codingforentrepreneurs.com/blog/typescript-setup-guide">Typescript Setup Guide</a><a class="list-group-item" href="https://www.codingforentrepreneurs.com/blog/django-syncdb">Syncdb is ... gone?</a><a class="list-group-item" href="https://www.codingforentrepreneurs.com/blog/reactify-django">Reactify Django</a><a class="list-group-item" href="https://www.codingforentrepreneurs.com/blog/hello-linux-install-redis">Hello Linux: Install Redis</a></div></div></div></div></div><script type="application/ld+json">{"@context":"http://schema.org/","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@id":"http://www.codingforentrepreneurs.com/blog","name":"Blog","image":"https://cfe-static.s3.amazonaws.com/media/00/share/coding-for-entrepreneurs-share.jpg"}},{"@type":"ListItem","position":2,"item":{"@type":"NewsArticle","author":{"@type":"Person","name":"Justin Mitchel"},"publisher":{"@type":"Organization","name":"Coding For Entrepreneurs","logo":{"@type":"ImageObject","url":"https://cfe2-static.s3-us-west-2.amazonaws.com/static/img/icons/android-icon-48x48.png"}},"datePublished":"2017-03-24","dateModified":"2020-02-26T19:02:30.779588-08:00","@id":"https://www.codingforentrepreneurs.com/blog/celery-redis-django","name":"Celery + Redis + Django","headline":"Celery + Redis + Django","mainEntityOfPage":"https://www.codingforentrepreneurs.com/blog/celery-redis-django","image":"https://static.codingforentrepreneurs.com/media/cfe-blog/celery-redis-django/setup_celery_redis_django.jpg"}}]}</script></div></div></div></div></div></div><div class="container-fluid border-top py-5"><div class="row"><div class="col-12 mx-auto text-center mb-2"><small class="text-muted"><a class="undefined" href="https://www.codingforentrepreneurs.com/about">About</a> ·  <a class="undefined active" aria-current="page" href="https://www.codingforentrepreneurs.com/blog">Blog</a> ·  <a class="undefined" href="https://www.codingforentrepreneurs.com/suggest">Suggestions</a> ·  <a class="undefined" href="https://www.codingforentrepreneurs.com/contact">Contact</a> ·  <a class="undefined" href="https://www.codingforentrepreneurs.com/connect">Connect</a>  ·  <a class="undefined" href="https://www.codingforentrepreneurs.com/coming-soon">Coming Soon</a></small></div></div><div class="row"><div class="col-12 mx-auto text-center"><a class="undefined active" aria-current="page" href="https://www.codingforentrepreneurs.com/"><img src="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/android-icon-48x48.png" alt="footer logo" class="img-fluid rounded mr-3" width="30" height="30"></a><small class="text-muted">© Copyright 2020 · codingforentrepreneurs.com</small></div></div></div></div>
+        <script>!function(l){function e(e){for(var r,t,n=e[0],o=e[1],u=e[2],f=0,i=[];f<n.length;f++)t=n[f],p[t]&&i.push(p[t][0]),p[t]=0;for(r in o)Object.prototype.hasOwnProperty.call(o,r)&&(l[r]=o[r]);for(s&&s(e);i.length;)i.shift()();return c.push.apply(c,u||[]),a()}function a(){for(var e,r=0;r<c.length;r++){for(var t=c[r],n=!0,o=1;o<t.length;o++){var u=t[o];0!==p[u]&&(n=!1)}n&&(c.splice(r--,1),e=f(f.s=t[0]))}return e}var t={},p={1:0},c=[];function f(e){if(t[e])return t[e].exports;var r=t[e]={i:e,l:!1,exports:{}};return l[e].call(r.exports,r,r.exports,f),r.l=!0,r.exports}f.m=l,f.c=t,f.d=function(e,r,t){f.o(e,r)||Object.defineProperty(e,r,{enumerable:!0,get:t})},f.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},f.t=function(r,e){if(1&e&&(r=f(r)),8&e)return r;if(4&e&&"object"==typeof r&&r&&r.__esModule)return r;var t=Object.create(null);if(f.r(t),Object.defineProperty(t,"default",{enumerable:!0,value:r}),2&e&&"string"!=typeof r)for(var n in r)f.d(t,n,function(e){return r[e]}.bind(null,n));return t},f.n=function(e){var r=e&&e.__esModule?function(){return e.default}:function(){return e};return f.d(r,"a",r),r},f.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)},f.p="/";var r=window.webpackJsonp=window.webpackJsonp||[],n=r.push.bind(r);r.push=e,r=r.slice();for(var o=0;o<r.length;o++)e(r[o]);var s=n;a()}([])</script>
+        <script src="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/2.8ee8bf40.chunk.js"></script>
+        <script src="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/main.6ae435bf.chunk.js"></script>
+    
+        
+ <script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "item": {
+      "@id": "http://www.codingforentrepreneurs.com/blog/",
+      "name": "Blog",
+      "image": "https://cfe-static.s3.amazonaws.com/media/00/share/coding-for-entrepreneurs-share.jpg"
+    }
+  },
+  {
+    "@type": "ListItem",
+    "position": 2,
+    "item": {
+      "@id": "https://www.codingforentrepreneurs.com/blog/celery-redis-django/",
+      "name": "Celery + Redis + Django",
+      "image": "https://static.codingforentrepreneurs.com/media/cfe-blog/celery-redis-django/setup_celery_redis_django.jpg"
+    }
+  }]
+}
+</script>
+
+
+    
+<iframe scrolling="no" frameborder="0" allowtransparency="true" src="./Celery + Redis + Django _ Post _ Coding For Entrepreneurs_files/widget_iframe.7aeb03ce9f308997020e5998720fbbf7.html" title="Twitter settings iframe" style="display: none;"></iframe></body></html>

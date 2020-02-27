@@ -1,0 +1,25 @@
+https://realpython.com/caching-in-django-with-redis/
+
+if so many library are installing
+
+create folder
+cd foldersudo chmod -R 777 ./
+
+
+#1.
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'junedCelery.settings')
+app= Celery('junedCelery')
+change with project name
+django admin startproject projectname
+
+2. install redis
+https://redis.io/download
+wget http://download.redis.io/releases/redis-5.0.7.tar.gz
+tar xzf redis-5.0.7.tar.gz
+cd redis-5.0.7
+$ make
+
+The binaries that are now compiled are available in the src directory. Run Redis with:
+
+$ src/redis-server
+ sudo apt install redis-server
