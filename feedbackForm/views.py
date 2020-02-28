@@ -7,4 +7,4 @@ class FeedbackView(FormView):
     template_name = 'feedback/contact.html'
 
     form_class = FeedbackForm
-    success_url = '/'
+    success_url = '/admin'

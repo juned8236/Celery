@@ -5,5 +5,4 @@ class FeedbackForm(forms.Form):
     message = forms.CharField(
         label="Message", widget=forms.Textarea(attrs={'rows': 5}))
     honeypot = forms.CharField(widget=forms.HiddenInput(), required=False)
-
  
